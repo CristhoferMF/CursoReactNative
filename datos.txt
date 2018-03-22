@@ -1,0 +1,4 @@
+Application name 	musicaproyecto
+API key 	c0f28b68508cdd4730846664d863a28b
+Shared secret 	7912d7d8bade85fcf48e3cf0a0e1214a
+Registered to 	CristhoferMF

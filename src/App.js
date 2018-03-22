@@ -8,13 +8,12 @@ import React, { Component } from 'react';
 import {
   Platform,
   StyleSheet,
-  Text,
   View,
-  Image,
-  ScrollView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/dist/Ionicons';
-import ArtistBox from './ArtistBox'
+
+import Artistlist from './ArtistList'
+import {getArtist} from './apiClient'
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
     'Cmd+D or shake for dev menu',
@@ -24,22 +23,22 @@ const instructions = Platform.select({
 
 type Props = {};
 export default class App extends Component<Props> {
+  state ={
+    artists:[]
+  }
+  componentDidMount(){
+    getArtist().then(data => this.setState({artists:data}))
+  }
+
   render() {
-    const artist={
-      image: 'https://cdn-images-1.medium.com/max/2000/1*KB0_Uj3RfiRis9_BFZGsTg.png',
-      name:'The Beatles',
-      likes:200,
-      comments:140
-    }
+
+    const artists=this.state.artists
+
     return (
-      <ScrollView style={styles.container}>
-        <ArtistBox artist={artist}/>
-        <ArtistBox artist={artist}/>
-        <ArtistBox artist={artist}/>
-        <ArtistBox artist={artist}/>
-        <ArtistBox artist={artist}/>
-        <ArtistBox artist={artist}/>
-      </ScrollView>
+      <View style={styles.container}>
+        <Artistlist artists={artists}/>
+      </View>
+      
     );
   }
 }
@@ -48,6 +47,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor:'lightgray',
-    paddingTop: 20,
+    paddingTop: 20
   }
 });
