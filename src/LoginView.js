@@ -10,37 +10,53 @@ import {
   StyleSheet,
   View,
   Text,
+  Button
 } from 'react-native'
 import FBSDK ,{ LoginButton,AccessToken} from 'react-native-fbsdk'
+import { Actions } from 'react-native-router-flux';
+import firebase,{firebaseAuth} from './firebase'
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+const {FacebookAuthProvider} = firebase.auth
 
 type Props = {};
 export default class LoginView extends Component<Props> {
+state ={
+  credentials:null
+}
 
+componentWillMount(){
+this.authenticateUser()
+}
+authenticateUser = () => {
+ AccessToken.getCurrentAccessToken().then((data)=> {
+ const {accessToken}=data
+const credential= FacebookAuthProvider.credential(accessToken)
+firebaseAuth.signInWithCredential(credential).then((credentials) => {
+  //console.log("Sign In Success", user);
+    Actions.home()
+  }).catch(function(error) {
+  console.log("Sign In Error", error);
+});
+})
+}
+
+handleButtonPress = () =>{
+  Actions.home()
+}
   render() {
     return (
       <View style={styles.container}>
       <Text style={styles.welcome}>Bienvenido a la musica</Text>
-        <LoginButton
-          readPermissions={["email"]}
+      <LoginButton
+          readPermissions={['public_profile','email']}
           onLoginFinished={
             (error, result) => {
               if (error) {
-                alert("login has error: " + result.error);
+                console.error(error)
               } else if (result.isCancelled) {
                 alert("login is cancelled.");
               } else {
-                AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                    alert(data.accessToken.toString())
-                  }
-                )
+                  this.authenticateUser()
               }
             }
           }
