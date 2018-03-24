@@ -8,9 +8,11 @@ import React, { Component } from 'react';
 import {
   Platform,
   ListView,
+  TouchableOpacity
 } from 'react-native';
 
 import ArtistBox from './ArtistBox'
+import { Actions } from 'react-native-router-flux';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -25,24 +27,42 @@ export default class ArtistList extends Component<Props> {
 constructor(props) {
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    
     this.state = {
-      dataSource: ds.cloneWithRows(props.artists)
-    };
+      dataSource:ds
+    }
   }
+
+  componentDidMount(){
+    this.updateDataSource(this.props.artists);
+  }
+
   componentWillReceiveProps(newProps){
     if(newProps.artists !== this.props.artists){
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(newProps.artists)
-      })
+      this.updateDataSource(newProps.artists);
     }
+  }
+
+  updateDataSource = data => {
+    this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(data)
+      })
+  }
+  
+  handlePress(artist){
+    Actions.artistDetail({artist})
   }
 
   render() {
     return (
       <ListView
+      enableEmptySections={true}
         dataSource={this.state.dataSource}
-        renderRow={(artist) => <ArtistBox artist={artist}/>}
+        renderRow={(artist) => 
+          { return (
+            <TouchableOpacity onPress={() => this.handlePress(artist)}>
+            <ArtistBox artist={artist}/>
+            </TouchableOpacity>)}
+        }
       />
     );
   }

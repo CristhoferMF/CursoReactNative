@@ -6,47 +6,31 @@
 
 import React, { Component } from 'react';
 import {
+  AppRegistry,
   Platform,
   StyleSheet,
   View,
 } from 'react-native';
 
-import Artistlist from './ArtistList'
-import {getArtist} from './apiClient'
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
+import {Scene, Router} from 'react-native-router-flux';
+import HomeView from './HomeView'
+import LoginView from './LoginView'
+import ArtistDetailView from './ArtistDetailView'
 type Props = {};
-export default class App extends Component<Props> {
-  state ={
-    artists:[]
-  }
-  componentDidMount(){
-    getArtist().then(data => this.setState({artists:data}))
-  }
-
+class App extends Component<Props> {
   render() {
-
-    const artists=this.state.artists
-
-    return (
-      <View style={styles.container}>
-        <Artistlist artists={artists}/>
-      </View>
-      
-    );
+    const isAndroid = Platform.OS === 'android'
+    
+    return <Router>
+      <Scene key="root">
+        <Scene key="login" component={LoginView} hideNavBar/>
+        <Scene key="home" component={HomeView} hideNavBar/>
+        <Scene key="artistDetail" component={ArtistDetailView} hideNavBar={isAndroid}/>
+      </Scene>
+    </Router>
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor:'lightgray',
-    paddingTop: 20
-  }
-});
+AppRegistry.registerComponent('miproyecto', () => App);
+
+
